@@ -2,6 +2,7 @@
 
 namespace App\Systems;
 
+use App\Models\Instruction;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Service\Attribute\Required;
 
@@ -76,5 +77,10 @@ class Memory
     public function getMemory(): array
     {
         return $this->memory;
+    }
+
+    public function fetchInstruction(int $address): Instruction
+    {
+        return Instruction::fromBytes($this->memory[$address], $this->memory[$address+1]);
     }
 }

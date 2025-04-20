@@ -2,6 +2,7 @@
 
 namespace App\Tests\Systems;
 
+use App\Models\Instruction;
 use App\Systems\Memory;
 use PHPUnit\Framework\TestCase;
 
@@ -251,5 +252,18 @@ class MemoryTest extends TestCase
         ];
 
         $this->assertSame($expected, array_slice($this->memory->getMemory(), 0, 80));
+    }
+
+    public function testGetInstruction(): void
+    {
+        $this->memory->loadRom(__DIR__ . '/../../tests/fixtures/roms/ibm_logo.ch8');
+        $instruction = $this->memory->fetchInstruction(Memory::ROM_START);
+        $this->assertSame('00', $instruction->byte1);
+        $this->assertSame('e0', $instruction->byte2);
+        $this->assertSame('0', $instruction->nibble1);
+        $this->assertSame('0', $instruction->nibble2);
+        $this->assertSame('e', $instruction->nibble3);
+        $this->assertSame('0', $instruction->nibble4);
+        $this->assertSame('0e0', $instruction->address);
     }
 }
