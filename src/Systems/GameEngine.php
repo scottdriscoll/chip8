@@ -22,6 +22,7 @@ class GameEngine
 
             try {
                 $decoder = $this->decoder->decodeInstruction($instruction);
+                echo $instruction.' '.$decoder->name() . "\n";
                 $decoder->execute($instruction);
             } catch (\Exception $e) {
                 echo $e->getMessage() . "\n";

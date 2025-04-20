@@ -25,4 +25,9 @@ class Instruction
 
         return $instruction;
     }
+
+    public function __toString(): string
+    {
+        return $this->byte1 . $this->byte2;
+    }
 }
