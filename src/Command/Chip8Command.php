@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Systems\GameEngine;
 use App\Systems\Memory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -13,11 +14,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:chip8',
-    description: 'Add a short description for your command',
+    description: 'Chip8 emulator',
 )]
 class Chip8Command extends Command
 {
-    public function __construct(private readonly Memory $memory)
+    public function __construct(private readonly GameEngine $gameEngine)
     {
         parent::__construct();
     }
@@ -25,28 +26,25 @@ class Chip8Command extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
+            ->addArgument('path', InputArgument::OPTIONAL, 'Path to rom', 'tests/fixtures/roms/ibm_logo.ch8')
             ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $this->memory->loadRom(__DIR__ . '/../../tests/fixtures/roms/ibm_logo.ch8');
-
         $io = new SymfonyStyle($input, $output);
-        $arg1 = $input->getArgument('arg1');
+        $path = $input->getArgument('path');
 
-        if ($arg1) {
-            $io->note(sprintf('You passed an argument: %s', $arg1));
+        try {
+            $this->gameEngine->run($path);
+        } catch (\Exception $e) {
+            $io->error($e->getMessage());
         }
 
         if ($input->getOption('option1')) {
             // ...
         }
-
-        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
 
         return Command::SUCCESS;
     }

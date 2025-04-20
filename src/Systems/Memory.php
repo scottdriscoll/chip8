@@ -41,6 +41,9 @@ class Memory
      */
     public function loadRom(string $path): void
     {
+        if (!file_exists($path)) {
+            throw new \InvalidArgumentException('ROM file does not exist.');
+        }
         $hex = unpack("H*", file_get_contents($path));
         $hex = current($hex);
         $start = self::ROM_START;
@@ -52,6 +55,9 @@ class Memory
 
     public function loadFont(string $path): void
     {
+        if (!file_exists($path)) {
+            throw new \InvalidArgumentException('Font file does not exist.');
+        }
         $fontCharacters = json_decode(file_get_contents($path), true);
         $start = self::FONT_START;
 
