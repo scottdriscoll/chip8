@@ -19,7 +19,7 @@ class JumpDecoder implements DecoderInterface
 
     public function execute(Instruction $instruction): void
     {
-
+        $this->programCounter->set($instruction->addressInt);
     }
 
     public function name(): string

@@ -18,4 +18,9 @@ class ProgramCounter
     {
         return $this->pc;
     }
+
+    public function set(int $pc): void
+    {
+        $this->pc = $pc;
+    }
 }

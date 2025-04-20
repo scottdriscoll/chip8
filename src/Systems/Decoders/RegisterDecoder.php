@@ -22,11 +22,11 @@ class RegisterDecoder implements DecoderInterface
     {
         switch ($instruction->nibble1) {
             case '6':
-                $this->registers->setGeneralRegister($instruction->nibble2, $instruction->byte2);
+                $this->registers->setGeneralRegister($instruction->nibble2Int, $instruction->byte2);
                 break;
             case '7':
-                $val = (int) hexdec($this->registers->getGeneralRegister($instruction->nibble2)) + (int) hexdec($instruction->byte2);
-                $this->registers->setGeneralRegister($instruction->nibble2, dechex($val));
+                $val = (int) hexdec($this->registers->getGeneralRegister($instruction->nibble2Int)) + $instruction->byte2Int;
+                $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($val));
                 break;
             case 'a':
                 $this->registers->setIndexRegister($instruction->address);
