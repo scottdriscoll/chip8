@@ -12,10 +12,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'app:chips8',
+    name: 'app:chip8',
     description: 'Add a short description for your command',
 )]
-class Chips8Command extends Command
+class Chip8Command extends Command
 {
     public function __construct(private readonly Memory $memory)
     {

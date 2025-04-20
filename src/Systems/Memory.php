@@ -2,8 +2,6 @@
 
 namespace App\Systems;
 
-use Symfony\Contracts\Service\Attribute\Required;
-
 class Memory
 {
     const ROM_START = 512;
@@ -16,7 +14,6 @@ class Memory
 
     public function __construct()
     {
-
     }
 
     /**
