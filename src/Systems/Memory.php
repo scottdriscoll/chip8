@@ -10,10 +10,9 @@ class Memory
     const MEMORY_SIZE = 4096;
 
     /**
-     * 4096 bytes
-     * @var array
+     * @var array<int, string|null> $memory
      */
-    private array $memory = [];
+    private array $memory;
 
     public function __construct()
     {
@@ -40,6 +39,9 @@ class Memory
         $this->memory = array_pad($this->memory, self::MEMORY_SIZE, null);
     }
 
+    /**
+     * @return array<int, string|null>
+     */
     public function getMemory(): array
     {
         return $this->memory;
