@@ -16,9 +16,9 @@ class MemoryTest extends TestCase
 
     public function testLoadRom(): void
     {
-        $path = __DIR__ . '/../../tests/fixtures/roms/ibm_logo.ch8';
+        $romPath = __DIR__ . '/../../tests/fixtures/roms/ibm_logo.ch8';
 
-        $this->memory->loadRom($path);
+        $this->memory->loadRom($romPath);
 
         for ($i = 0; $i < 512; $i++) {
             $arr[$i] = null;
@@ -162,5 +162,94 @@ class MemoryTest extends TestCase
         }
 
         $this->assertSame($arr, $this->memory->getMemory());
+    }
+
+    public function testFont(): void
+    {
+        $this->memory->loadFont(__DIR__ . '/../../assets/fonts/standard.json');
+        $expected = [
+            0 => "f0",
+            1 => "90",
+            2 => "90",
+            3 => "90",
+            4 => "f0",
+            5 => "20",
+            6 => "60",
+            7 => "20",
+            8 => "20",
+            9 => "70",
+            10 => "f0",
+            11 => "10",
+            12 => "f0",
+            13 => "80",
+            14 => "f0",
+            15 => "f0",
+            16 => "10",
+            17 => "f0",
+            18 => "10",
+            19 => "f0",
+            20 => "90",
+            21 => "90",
+            22 => "f0",
+            23 => "10",
+            24 => "10",
+            25 => "f0",
+            26 => "80",
+            27 => "f0",
+            28 => "10",
+            29 => "f0",
+            30 => "f0",
+            31 => "80",
+            32 => "f0",
+            33 => "90",
+            34 => "f0",
+            35 => "f0",
+            36 => "10",
+            37 => "20",
+            38 => "40",
+            39 => "40",
+            40 => "f0",
+            41 => "90",
+            42 => "f0",
+            43 => "90",
+            44 => "f0",
+            45 => "f0",
+            46 => "90",
+            47 => "f0",
+            48 => "10",
+            49 => "f0",
+            50 => "f0",
+            51 => "90",
+            52 => "f0",
+            53 => "90",
+            54 => "90",
+            55 => "e0",
+            56 => "90",
+            57 => "e0",
+            58 => "90",
+            59 => "e0",
+            60 => "f0",
+            61 => "80",
+            62 => "80",
+            63 => "80",
+            64 => "f0",
+            65 => "e0",
+            66 => "90",
+            67 => "90",
+            68 => "90",
+            69 => "e0",
+            70 => "f0",
+            71 => "80",
+            72 => "f0",
+            73 => "80",
+            74 => "f0",
+            75 => "f0",
+            76 => "80",
+            77 => "f0",
+            78 => "80",
+            79 => "80"
+        ];
+
+        $this->assertSame($expected, array_slice($this->memory->getMemory(), 0, 80));
     }
 }
