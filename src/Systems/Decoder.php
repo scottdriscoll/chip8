@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 class Decoder
 {
     public function __construct(
+        /** @var DecoderInterface[] $decoders */
         #[AutowireIterator(DecoderInterface::class)] private iterable $decoders,
     ) {
     }

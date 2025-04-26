@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Systems\GameEngine;
-use App\Systems\Memory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -37,6 +36,8 @@ class Chip8Command extends Command
         $path = $input->getArgument('path');
 
         try {
+            register_shutdown_function('\App\Helpers\OutputHelper::showCursor');
+            $this->gameEngine->setOutput($output);
             $this->gameEngine->run($path);
         } catch (\Exception $e) {
             $io->error($e->getMessage());
