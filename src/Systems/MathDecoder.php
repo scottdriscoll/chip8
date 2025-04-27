@@ -30,8 +30,15 @@ class MathDecoder extends Decoders\AbstractDecoder implements Decoders\DecoderIn
             $this->vxXORvy($instruction);
         } elseif ($instruction->nibble4 === '4') {
             $this->vxAddvy($instruction);
+        } elseif ($instruction->nibble4 === '5') {
+            $this->vxSubvy($instruction);
+        } elseif ($instruction->nibble4 === '7') {
+            $this->vxSubnvy($instruction);
+        } elseif ($instruction->nibble4 === '6' || $instruction->nibble4 === 'e') {
+            $this->shift($instruction, $instruction->nibble4 === 'e');
+        } else {
+            throw new \Exception("Unknown instruction in ShiftDecoder: $instruction->byte1$instruction->byte2");
         }
-
     }
 
     public function name(): string
@@ -83,6 +90,63 @@ class MathDecoder extends Decoders\AbstractDecoder implements Decoders\DecoderIn
         } else {
             $this->registers->setGeneralRegister(0xF, '0');
         }
+        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($val));
+    }
+
+    private function vxSubvy(Instruction $instruction): void
+    {
+        $vx = hexdec($this->registers->getGeneralRegister($instruction->nibble2Int));
+        $vy = hexdec($this->registers->getGeneralRegister($instruction->nibble3Int));
+        $newVal = $vx - $vy;
+        if ($vx > $vy) {
+            $this->registers->setGeneralRegister(0xF, '1');
+        } elseif ($vy > $vx) {
+            $this->registers->setGeneralRegister(0xF, '0');
+            if ($newVal < 0) {
+                $newVal += 0x100;
+            }
+        }
+        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($newVal));
+    }
+
+    private function vxSubnvy(Instruction $instruction): void
+    {
+        $vx = hexdec($this->registers->getGeneralRegister($instruction->nibble2Int));
+        $vy = hexdec($this->registers->getGeneralRegister($instruction->nibble3Int));
+        $newVal = $vy - $vx;
+        if ($vy > $vx) {
+            $this->registers->setGeneralRegister(0xF, '1');
+        } elseif ($vx > $vy) {
+            $this->registers->setGeneralRegister(0xF, '0');
+            if ($newVal < 0) {
+                $newVal += 0x100;
+            }
+        }
+        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($newVal));
+    }
+
+    private function shift(Instruction $instruction, bool $left): void
+    {
+        echo "\nShift $instruction->nibble4 $left\n";
+        $vx = hexdec($this->registers->getGeneralRegister($instruction->nibble2Int));
+        echo "vx: $vx   \n";
+        $this->writeDebugOutput("Shifting $vx $instruction->nibble4 $left\n");
+        $this->writeDebugOutput("vx: $vx\n");
+        $val = $left ? $vx << 1 : $vx >> 1;
+        echo "val: $val\n";
+        if ($left) {
+            $this->registers->setGeneralRegister(0xF, ($vx & 0x1) ? '1' : '0');
+            $this->writeDebugOutput("vx & 0x1: " . ($vx & 0x1) . "\n");
+        } else {
+            $this->registers->setGeneralRegister(0xF, ($vx & 0x80) ? '1' : '0');
+            $this->writeDebugOutput("vx & 0x80: " . ($vx & 0x80) . "\n");
+        }
+        if ($val > 0xFF) {
+            $val -= 0x100;
+        }
+        echo "val updated: $val \n";
+        echo "dec: " . dechex($val) . " \n";
+        $this->writeDebugOutput("newVal: $val\n");
         $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($val));
     }
 }
