@@ -54,7 +54,7 @@ class GameEngine
                 break;
             }
 
-            usleep(10000);
+            usleep(1000);
         }
     }
 
