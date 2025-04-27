@@ -33,7 +33,7 @@ class ScreenUnit
         return $this->nextValue;
     }
 
-    public function getCurrent(): string
+    public function getCurrent(): ?string
     {
         return $this->currentValue;
     }
