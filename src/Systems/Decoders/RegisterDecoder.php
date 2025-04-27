@@ -27,7 +27,10 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
                 break;
             case '7':
                 $this->writeDebugOutput("Adding $instruction->byte2 ($instruction->byte2Int) to register $instruction->nibble2\n");
-                $val = (int) hexdec($this->registers->getGeneralRegister($instruction->nibble2Int)) + $instruction->byte2Int;
+                $val = (int) (hexdec($this->registers->getGeneralRegister($instruction->nibble2Int)) + $instruction->byte2Int);
+                if ($val >= 255) {
+                    $val -= 256;
+                }
                 $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($val));
                 $this->writeDebugOutput("Register $instruction->nibble2 now has value $val\n");
                 break;
