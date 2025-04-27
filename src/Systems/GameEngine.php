@@ -8,6 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GameEngine
 {
     private string $debugOutputPath = '';
+    private ?int $maxCycles = null;
 
     public function __construct(
         private readonly Memory $memory,
@@ -49,6 +50,10 @@ class GameEngine
                 break;
             }
 
+            if ($this->maxCycles && $counter >= $this->maxCycles) {
+                break;
+            }
+
             usleep(10000);
         }
     }
@@ -60,5 +65,10 @@ class GameEngine
         if ($this->debugOutputPath) {
             file_put_contents($this->debugOutputPath, "-----------------------\n", FILE_APPEND);
         }
+    }
+
+    public function setMaxCycles(int $maxCycles): void
+    {
+        $this->maxCycles = $maxCycles;
     }
 }

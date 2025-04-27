@@ -27,6 +27,7 @@ class Chip8Command extends Command
         $this
             ->addArgument('path', InputArgument::OPTIONAL, 'Path to rom', 'tests/fixtures/roms/ibm_logo.ch8')
             ->addArgument('debug-output-path', InputArgument::OPTIONAL, 'Path to debug output')
+            ->addOption('max-cycles', 'm', InputOption::VALUE_OPTIONAL, 'Max cycles');
         ;
     }
 
@@ -35,11 +36,15 @@ class Chip8Command extends Command
         $io = new SymfonyStyle($input, $output);
         $path = $input->getArgument('path');
         $debugPath = $input->getArgument('debug-output-path');
+        $maxCycles = $input->getOption('max-cycles');
 
         try {
             register_shutdown_function('\App\Helpers\OutputHelper::showCursor');
             if ($debugPath) {
                 $this->gameEngine->setDebugOutputPath($debugPath);
+            }
+            if ($maxCycles) {
+                $this->gameEngine->setMaxCycles($maxCycles);
             }
             $this->gameEngine->setOutput($output);
             $this->gameEngine->run($path);

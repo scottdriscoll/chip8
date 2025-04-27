@@ -106,4 +106,29 @@ class Display
             $this->screen[$y][$setX]->setNext($newValue);
         }
     }
+
+    public function logScreen(): void
+    {
+        for ($y = 0; $y < self::HEIGHT; $y++) {
+            for ($x = 0; $x < self::WIDTH * self::HORIZONTAL_SCALE; $x++) {
+                echo "$y, $x, " . (int)$this->pixelEnabled($y, $x) . "\n";
+            }
+        }
+    }
+
+    /**
+     * @return array<int, array<int, int>>
+     */
+    public function getEnabledArray(): array
+    {
+        $arr = [];
+
+        for ($y = 0; $y < self::HEIGHT; $y++) {
+            for ($x = 0; $x < self::WIDTH * self::HORIZONTAL_SCALE; $x++) {
+                $arr[$y][$x] = (int)$this->pixelEnabled($y, $x);
+            }
+        }
+
+        return $arr;
+    }
 }
