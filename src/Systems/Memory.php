@@ -88,4 +88,9 @@ class Memory
     {
         return $this->memory[$address];
     }
+
+    public function setMemoryValue(int $address, string $value): void
+    {
+        $this->memory[$address] = $value;
+    }
 }

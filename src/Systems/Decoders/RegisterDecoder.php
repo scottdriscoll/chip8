@@ -3,6 +3,7 @@
 namespace App\Systems\Decoders;
 
 use App\Models\Instruction;
+use App\Systems\Memory;
 use App\Systems\ProgramCounter;
 use App\Systems\Registers;
 
@@ -10,12 +11,13 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
 {
     public function __construct(
         private readonly Registers $registers,
+        private readonly Memory $memory,
     ) {
     }
 
     public function supports(Instruction $instruction): bool
     {
-        return in_array($instruction->nibble1, ['6', '7', 'a']);
+        return in_array($instruction->nibble1, ['6', '7', 'a']) || ($instruction->nibble1 == 'f' && in_array($instruction->byte2, ['55', '65']));
     }
 
     public function execute(Instruction $instruction): void
@@ -38,6 +40,31 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
                 $this->writeDebugOutput("Setting index register to $instruction->address ($instruction->addressInt)\n");
                 $this->registers->setIndexRegister($instruction->address);
                 break;
+            case 'f':
+                if ($instruction->byte2 === '55') {
+                    $this->saveRegistersToMemory($instruction);
+                } else {
+                    $this->loadRegistersFromMemory($instruction);
+                }
+                break;
+        }
+    }
+
+    private function saveRegistersToMemory(Instruction $instruction): void
+    {
+        $idx = hexdec($this->registers->getIndexRegister());
+        for ($i = 0; $i <= $instruction->nibble2Int; $i++) {
+            $val = hexdec($this->registers->getGeneralRegister($i));
+            $this->memory->setMemoryValue($idx + $i, dechex($val));
+        }
+    }
+
+    private function loadRegistersFromMemory(Instruction $instruction): void
+    {
+        $idx = hexdec($this->registers->getIndexRegister());
+        for ($i = 0; $i <= $instruction->nibble2Int; $i++) {
+            $val = $this->memory->getMemoryValue($idx + $i);
+            $this->registers->setGeneralRegister($i, $val);
         }
     }
 
