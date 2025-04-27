@@ -5,7 +5,7 @@ namespace App\Systems\Decoders;
 use App\Models\Instruction;
 use App\Systems\ProgramCounter;
 
-class JumpDecoder implements DecoderInterface
+class JumpDecoder extends AbstractDecoder implements DecoderInterface
 {
     public function __construct(
         private readonly ProgramCounter $programCounter,
@@ -19,6 +19,7 @@ class JumpDecoder implements DecoderInterface
 
     public function execute(Instruction $instruction): void
     {
+        $this->writeDebugOutput("Jumping to {$instruction->address}\n");
         $this->programCounter->set($instruction->addressInt);
     }
 

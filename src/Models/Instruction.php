@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
+#[Exclude]
 class Instruction
 {
     public string $byte1;

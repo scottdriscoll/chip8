@@ -83,4 +83,9 @@ class Memory
     {
         return Instruction::fromBytes($this->memory[$address], $this->memory[$address+1]);
     }
+
+    public function getMemoryValue(int $address): ?string
+    {
+        return $this->memory[$address];
+    }
 }

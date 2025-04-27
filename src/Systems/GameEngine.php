@@ -7,6 +7,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GameEngine
 {
+    private string $debugOutputPath = '';
+
     public function __construct(
         private readonly Memory $memory,
         private readonly Decoder $decoder,
@@ -27,27 +29,36 @@ class GameEngine
         if ($this->display->getOutput() === null) {
             throw new \Exception('Output not set.');
         }
-        $this->display->draw();
-        $this->display->togglePixel(3, 5);
-        $this->display->draw();return;
 
         $this->memory->loadRom($romPath);
+        $counter = 0;
 
         while (true) {
             $instruction = $this->memory->fetchInstruction($this->programCounter->get());
             $this->programCounter->increment();
+            $counter++;
 
             try {
                 $decoder = $this->decoder->decodeInstruction($instruction);
-                echo $instruction.' '.$decoder->name() . "\n";
+                if ($this->debugOutputPath) {
+                    file_put_contents($this->debugOutputPath, "\n" . $counter . ' ' . $instruction->byte1 . $instruction->byte2 . ' ' . $decoder->name() . "\n", FILE_APPEND);
+                }
                 $decoder->execute($instruction);
             } catch (\Exception $e) {
                 echo $e->getMessage() . "\n";
                 break;
             }
 
-            echo "looping...\n";
             usleep(100000);
+        }
+    }
+
+    public function setDebugOutputPath(string $path): void
+    {
+        $this->debugOutputPath = $path;
+        $this->decoder->setDebugOutputPath($path);
+        if ($this->debugOutputPath) {
+            file_put_contents($this->debugOutputPath, "-----------------------\n", FILE_APPEND);
         }
     }
 }

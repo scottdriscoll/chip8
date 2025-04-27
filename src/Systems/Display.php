@@ -8,8 +8,8 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 class Display
 {
-    private const WIDTH = 64;
-    private const HEIGHT = 32;
+    public const WIDTH = 64;
+    public const HEIGHT = 32;
     private const HORIZONTAL_SCALE = 2;
     private const SCREEN_UNIT = '<bg=green> </bg=green>';
     private const ERASE_UNIT = '<bg=black> </bg=black>';
@@ -88,12 +88,20 @@ class Display
 
     public function pixelEnabled(int $x, int $y): bool
     {
+        if ($x < 0 || $x >= self::WIDTH || $y < 0 || $y >= self::HEIGHT) {
+            return false;
+        }
+
         return $this->screen[$y][$x * self::HORIZONTAL_SCALE]->getCurrent() === self::SCREEN_UNIT;
     }
 
-    public function togglePixel(int $x, int $y): void
+    public function setEnabled(int $x, int $y, bool $enabled): void
     {
-        $newValue = $this->screen[$y][$x * self::HORIZONTAL_SCALE]->getCurrent() === self::SCREEN_UNIT ? self::ERASE_UNIT : self::SCREEN_UNIT;
+        if ($x < 0 || $x >= self::WIDTH || $y < 0 || $y >= self::HEIGHT) {
+            return;
+        }
+
+        $newValue = $enabled ? self::SCREEN_UNIT : self::ERASE_UNIT;
         for ($setX = $x * self::HORIZONTAL_SCALE; $setX < $x * self::HORIZONTAL_SCALE + self::HORIZONTAL_SCALE; $setX++) {
             $this->screen[$y][$setX]->setNext($newValue);
         }

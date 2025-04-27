@@ -24,4 +24,11 @@ class Decoder
 
         throw new \Exception('Instruction not supported: ' . $instruction->byte1 . $instruction->byte2);
     }
+
+    public function setDebugOutputPath(string $path): void
+    {
+        foreach ($this->decoders as $decoder) {
+            $decoder->setDebugOutputPath($path);
+        }
+    }
 }

@@ -26,7 +26,7 @@ class Chip8Command extends Command
     {
         $this
             ->addArgument('path', InputArgument::OPTIONAL, 'Path to rom', 'tests/fixtures/roms/ibm_logo.ch8')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
+            ->addArgument('debug-output-path', InputArgument::OPTIONAL, 'Path to debug output')
         ;
     }
 
@@ -34,17 +34,17 @@ class Chip8Command extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $path = $input->getArgument('path');
+        $debugPath = $input->getArgument('debug-output-path');
 
         try {
             register_shutdown_function('\App\Helpers\OutputHelper::showCursor');
+            if ($debugPath) {
+                $this->gameEngine->setDebugOutputPath($debugPath);
+            }
             $this->gameEngine->setOutput($output);
             $this->gameEngine->run($path);
         } catch (\Exception $e) {
             $io->error($e->getMessage());
-        }
-
-        if ($input->getOption('option1')) {
-            // ...
         }
 
         return Command::SUCCESS;
