@@ -65,6 +65,9 @@ Example usage with debug output and max cycles:
 ```bash
 php bin/console app:chip8 my-roms/pong.ch8 debug.txt --max-cycles=10000
 ```
+Running the emulator with the default parameters should display the following output:
+
+![IBM Logo Output](images/ibm.png)
 
 ---
 
