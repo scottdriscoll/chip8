@@ -17,7 +17,7 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return in_array($instruction->nibble1, ['6', '7', 'a']) || ($instruction->nibble1 == 'f' && in_array($instruction->byte2, ['55', '65']));
+        return in_array($instruction->nibble1, ['6', '7', 'a']) || ($instruction->nibble1 == 'f' && in_array($instruction->byte2, ['55', '65', '33']));
     }
 
     public function execute(Instruction $instruction): void
@@ -43,8 +43,10 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
             case 'f':
                 if ($instruction->byte2 === '55') {
                     $this->saveRegistersToMemory($instruction);
-                } else {
+                } elseif ($instruction->byte2 === '65') {
                     $this->loadRegistersFromMemory($instruction);
+                } elseif ($instruction->byte2 === '33') {
+                    $this->decimalConversion($instruction);
                 }
                 break;
         }
@@ -63,8 +65,18 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
     {
         $idx = hexdec($this->registers->getIndexRegister());
         for ($i = 0; $i <= $instruction->nibble2Int; $i++) {
-            $val = $this->memory->getMemoryValue($idx + $i);
+            $val = (string) $this->memory->getMemoryValue($idx + $i);
             $this->registers->setGeneralRegister($i, $val);
+        }
+    }
+
+    private function decimalConversion(Instruction $instruction): void
+    {
+        $idx = hexdec($this->registers->getIndexRegister());
+        $vx = hexdec($this->registers->getGeneralRegister($instruction->nibble2Int));
+        $str = str_pad($vx, 3, '0', STR_PAD_LEFT);
+        foreach (str_split($str) as $i => $char) {
+            $this->memory->setMemoryValue($idx + $i, $char);
         }
     }
 
