@@ -7,7 +7,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 class OutputHelper
 {
-    private ?OutputInterface $output;
+    private OutputInterface $output;
 
     private string $string = '';
 

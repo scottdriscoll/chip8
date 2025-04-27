@@ -9,6 +9,9 @@ use App\Systems\Registers;
 
 class DrawDecoder extends AbstractDecoder implements DecoderInterface
 {
+    /**
+     * @var array<int, int> $bits
+     */
     private array $bits = [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01];
 
     public function __construct(
@@ -47,7 +50,7 @@ class DrawDecoder extends AbstractDecoder implements DecoderInterface
             for ($i = 0; $i < 8; $i++) {
                 $bitEnabled = (bool) ($sprite & $this->bits[$i]);
                 $oldEnabled = $this->display->pixelEnabled($x + $i, $y + $i);
-                $newEnabled = $bitEnabled xor $oldEnabled;
+                $newEnabled = ($bitEnabled xor $oldEnabled);
                 if ($newEnabled && !$oldEnabled) {
                     $pixelsToggled = true;
                 }

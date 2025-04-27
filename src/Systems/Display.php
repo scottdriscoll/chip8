@@ -46,7 +46,7 @@ class Display
         return $this->output;
     }
 
-    public function clearScreen()
+    public function clearScreen(): void
     {
         foreach ($this->screen as $row) {
             foreach ($row as $unit) {
@@ -55,7 +55,7 @@ class Display
         }
     }
 
-    public function nextFrame()
+    public function nextFrame(): void
     {
         foreach ($this->screen as $row) {
             foreach ($row as $unit) {
