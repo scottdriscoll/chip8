@@ -1,5 +1,7 @@
 # Chip8 Emulator (Symfony Console Command)
 
+![CI](https://github.com/scottdriscoll/chip8/actions/workflows/php.yml/badge.svg)
+
 This is a simple **Chip8 emulator** built as a **Symfony Console Command**.  
 It runs entirely inside your terminal — please make sure your terminal window is at least **128x32** characters in size for proper display.
 

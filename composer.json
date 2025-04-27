@@ -1,4 +1,6 @@
 {
+    "name": "scott/chip8",
+    "description": "Chip8 emulator written in a Symfony Console application",
     "type": "project",
     "license": "MIT",
     "minimum-stability": "stable",
@@ -53,6 +55,9 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "test": [
+            "phpunit --testdox tests"
         ]
     },
     "conflict": {
