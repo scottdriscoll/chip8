@@ -16,6 +16,7 @@ class GameEngine
         private readonly ProgramCounter $programCounter,
         private readonly Display $display,
         private readonly OutputHelper $outputHelper,
+        private readonly Timer $timer,
     ) {
     }
 
@@ -35,6 +36,7 @@ class GameEngine
         $counter = 0;
 
         while (true) {
+            $startTimer = microtime(true);
             $instruction = $this->memory->fetchInstruction($this->programCounter->get());
             $this->programCounter->increment();
             $counter++;
@@ -54,7 +56,9 @@ class GameEngine
                 break;
             }
 
-            usleep(1000);
+            $elapsed = (microtime(true) - $startTimer) * 1000;
+
+            $this->timer->elapsed($elapsed);
         }
     }
 
