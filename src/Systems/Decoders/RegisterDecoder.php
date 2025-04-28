@@ -56,8 +56,8 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
     {
         $idx = hexdec($this->registers->getIndexRegister());
         for ($i = 0; $i <= $instruction->nibble2Int; $i++) {
-            $val = hexdec($this->registers->getGeneralRegister($i));
-            $this->memory->setMemoryValue($idx + $i, dechex($val));
+            $val = $this->registers->getGeneralRegister($i);
+            $this->memory->setMemoryValue($idx + $i, $val);
         }
     }
 

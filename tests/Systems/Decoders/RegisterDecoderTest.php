@@ -4,18 +4,21 @@ namespace App\Tests\Systems\Decoders;
 
 use App\Models\Instruction;
 use App\Systems\Decoders\RegisterDecoder;
+use App\Systems\Memory;
 use App\Systems\Registers;
 use PHPUnit\Framework\TestCase;
 
 class RegisterDecoderTest extends TestCase
 {
     private Registers $registers;
+    private Memory $memory;
     private RegisterDecoder $registerDecoder;
 
     protected function setUp(): void
     {
         $this->registers = new Registers();
-        $this->registerDecoder = new RegisterDecoder($this->registers);
+        $this->memory = new Memory();
+        $this->registerDecoder = new RegisterDecoder($this->registers, $this->memory);
     }
 
     public function testSetRegister(): void

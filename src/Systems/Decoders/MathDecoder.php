@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Systems;
+namespace App\Systems\Decoders;
 
 use App\Models\Instruction;
 use App\Systems\Decoders\AbstractDecoder;
 use App\Systems\Decoders\DecoderInterface;
+use App\Systems\Registers;
 
-class MathDecoder extends Decoders\AbstractDecoder implements Decoders\DecoderInterface
+class MathDecoder extends AbstractDecoder implements DecoderInterface
 {
     public function __construct(
         private readonly Registers $registers,
@@ -127,25 +128,20 @@ class MathDecoder extends Decoders\AbstractDecoder implements Decoders\DecoderIn
 
     private function shift(Instruction $instruction, bool $left): void
     {
-        echo "\nShift $instruction->nibble4 $left\n";
         $vx = hexdec($this->registers->getGeneralRegister($instruction->nibble2Int));
-        echo "vx: $vx   \n";
         $this->writeDebugOutput("Shifting $vx $instruction->nibble4 $left\n");
         $this->writeDebugOutput("vx: $vx\n");
         $val = $left ? $vx << 1 : $vx >> 1;
-        echo "val: $val\n";
         if ($left) {
-            $this->registers->setGeneralRegister(0xF, ($vx & 0x1) ? '1' : '0');
-            $this->writeDebugOutput("vx & 0x1: " . ($vx & 0x1) . "\n");
-        } else {
             $this->registers->setGeneralRegister(0xF, ($vx & 0x80) ? '1' : '0');
             $this->writeDebugOutput("vx & 0x80: " . ($vx & 0x80) . "\n");
+        } else {
+            $this->registers->setGeneralRegister(0xF, ($vx & 0x1) ? '1' : '0');
+            $this->writeDebugOutput("vx & 0x1: " . ($vx & 0x1) . "\n");
         }
         if ($val > 0xFF) {
             $val -= 0x100;
         }
-        echo "val updated: $val \n";
-        echo "dec: " . dechex($val) . " \n";
         $this->writeDebugOutput("newVal: $val\n");
         $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($val));
     }
