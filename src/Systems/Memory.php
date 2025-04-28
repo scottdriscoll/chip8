@@ -71,6 +71,15 @@ class Memory
         }
     }
 
+    public function getFontIndex(string $character): int
+    {
+        if (!isset($this->fontIndexes[$character])) {
+            throw new \InvalidArgumentException('Font character not found: ' . $character);
+        }
+
+        return $this->fontIndexes[$character];
+    }
+
     /**
      * @return array<int, string|null>
      */
