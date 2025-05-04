@@ -82,7 +82,7 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
     private function addToIndex(Instruction $instruction): void
     {
         $idx = $this->registers->getIndexRegister();
-        $this->registers->setIndexRegister($idx + $instruction->byte2);
+        $this->registers->setIndexRegister($idx + $this->registers->getGeneralRegister($instruction->nibble2));
     }
 
     public function name(): string

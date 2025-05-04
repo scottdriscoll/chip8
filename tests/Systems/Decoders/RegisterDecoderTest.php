@@ -50,4 +50,13 @@ class RegisterDecoderTest extends TestCase
         $this->registerDecoder->execute($instruction);
         $this->assertSame(0x1e0, $this->registers->getIndexRegister());
     }
+
+    public function testAddToIndex(): void
+    {
+        $instruction = Instruction::fromBytes(0xf0, 0x1e);
+        $this->registers->setIndexRegister(0x100);
+        $this->registers->setGeneralRegister(0, 0x15);
+        $this->registerDecoder->execute($instruction);
+        $this->assertSame(0x115, $this->registers->getIndexRegister());
+    }
 }
