@@ -83,12 +83,12 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
         $vy = $this->registers->getGeneralRegister($instruction->nibble3);
 
         $val = $vx + $vy;
+        $this->registers->setGeneralRegister($instruction->nibble2, $val);
         if ($val > 0xFF) {
             $this->registers->setGeneralRegister(0xF, 0x1);
         } else {
             $this->registers->setGeneralRegister(0xF, 0);
         }
-        $this->registers->setGeneralRegister($instruction->nibble2, $val);
     }
 
     private function vxSubvy(Instruction $instruction): void
@@ -96,12 +96,12 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
         $vx = $this->registers->getGeneralRegister($instruction->nibble2);
         $vy = $this->registers->getGeneralRegister($instruction->nibble3);
         $newVal = $vx - $vy;
+        $this->registers->setGeneralRegister($instruction->nibble2, $newVal);
         if ($vx > $vy) {
             $this->registers->setGeneralRegister(0xF, 0x1);
         } elseif ($vy > $vx) {
             $this->registers->setGeneralRegister(0xF, 0);
         }
-        $this->registers->setGeneralRegister($instruction->nibble2, $newVal);
     }
 
     private function vxSubnvy(Instruction $instruction): void
@@ -109,12 +109,12 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
         $vx = $this->registers->getGeneralRegister($instruction->nibble2);
         $vy = $this->registers->getGeneralRegister($instruction->nibble3);
         $newVal = $vy - $vx;
+        $this->registers->setGeneralRegister($instruction->nibble2, $newVal);
         if ($vy > $vx) {
             $this->registers->setGeneralRegister(0xF, 0x1);
         } elseif ($vx > $vy) {
             $this->registers->setGeneralRegister(0xF, 0);
         }
-        $this->registers->setGeneralRegister($instruction->nibble2, $newVal);
     }
 
     private function shift(Instruction $instruction, bool $left): void
