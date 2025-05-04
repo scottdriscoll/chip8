@@ -22,7 +22,7 @@ class Decoder
             }
         }
 
-        throw new \Exception('Instruction not supported: ' . dechex($instruction->byte1) . dechex($instruction->byte2));
+        throw new \Exception('Instruction not supported: '.dechex($instruction->nibble1).dechex($instruction->nibble2).dechex($instruction->nibble3).dechex($instruction->nibble4));
     }
 
     public function setDebugOutputPath(string $path): void
