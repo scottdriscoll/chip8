@@ -14,14 +14,14 @@ class JumpDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return in_array($instruction->nibble1, ['1', 'b']);
+        return in_array($instruction->nibble1, [0x1, 0xb]);
     }
 
     public function execute(Instruction $instruction): void
     {
-        if ($instruction->nibble1 === '1') {
+        if ($instruction->nibble1 === 0x1) {
             $this->writeDebugOutput("Jumping to {$instruction->address}\n");
-            $this->programCounter->set($instruction->addressInt);
+            $this->programCounter->set($instruction->address);
         } else {
             throw new \Exception('Jump to V0 not supported');
 

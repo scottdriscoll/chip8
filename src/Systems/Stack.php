@@ -16,6 +16,6 @@ class Stack
 
     public function pop(): int
     {
-        return array_pop($this->stack);
+        return array_pop($this->stack) ?? 0;
     }
 }

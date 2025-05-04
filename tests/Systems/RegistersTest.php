@@ -16,20 +16,20 @@ class RegistersTest extends TestCase
 
     public function testGeneralRegistersInRange(): void
     {
-        $this->registers->setGeneralRegister(0, '00');
+        $this->registers->setGeneralRegister(0, 0x00);
 
-        $this->assertEquals('00', $this->registers->getGeneralRegister(0));
+        $this->assertEquals(0x00, $this->registers->getGeneralRegister(0));
     }
 
     public function testGeneralRegistersOutOfRange(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->registers->setGeneralRegister(100, '00');
+        $this->registers->setGeneralRegister(100, 0x00);
     }
 
     public function testIndexRegisterInRange(): void
     {
-        $this->registers->setIndexRegister('00');
-        $this->assertEquals('00', $this->registers->getIndexRegister());
+        $this->registers->setIndexRegister(0x00);
+        $this->assertEquals(0x00, $this->registers->getIndexRegister());
     }
 }

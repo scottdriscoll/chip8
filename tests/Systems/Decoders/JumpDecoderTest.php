@@ -20,7 +20,7 @@ class JumpDecoderTest extends TestCase
 
     public function testJump(): void
     {
-        $instruction = Instruction::fromBytes('11', '00');
+        $instruction = Instruction::fromBytes(0x11, 0x00);
         $this->assertTrue($this->jumpDecoder->supports($instruction));
         $this->jumpDecoder->execute($instruction);
         $this->assertSame(256, $this->programCounter->get());

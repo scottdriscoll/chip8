@@ -14,18 +14,18 @@ class Memory
     const MEMORY_SIZE = 4096;
 
     /**
-     * @var array<int, string|null> $memory
+     * @var array<int, int> $memory
      */
     private array $memory;
 
     /**
-     * @var array<string, string> $fontIndexes
+     * @var array<int, int> $fontIndexes
      */
     private array $fontIndexes = [];
 
     public function __construct()
     {
-        $this->memory = array_fill(0, self::MEMORY_SIZE, null);
+        $this->memory = array_fill(0, self::MEMORY_SIZE, 0);
     }
 
     #[Required]
@@ -50,7 +50,7 @@ class Memory
         $start = self::ROM_START;
 
         foreach (str_split($hex, 2) as $byte) {
-            $this->memory[$start++] = strtolower($byte);
+            $this->memory[$start++] = hexdec($byte);
         }
     }
 
@@ -63,15 +63,15 @@ class Memory
         $start = self::FONT_START;
 
         foreach ($fontCharacters as $character => $bytes) {
-            $this->fontIndexes[$character] = $start;
+            $this->fontIndexes[hexdec($character)] = $start;
 
             foreach ($bytes as $byte) {
-                $this->memory[$start++] = $byte;
+                $this->memory[$start++] = hexdec($byte);
             }
         }
     }
 
-    public function getFontIndex(string $character): int
+    public function getFontIndex(int $character): int
     {
         if (!isset($this->fontIndexes[$character])) {
             throw new \InvalidArgumentException('Font character not found: ' . $character);
@@ -81,7 +81,7 @@ class Memory
     }
 
     /**
-     * @return array<int, string|null>
+     * @return array<int, int>
      */
     public function getMemory(): array
     {
@@ -93,12 +93,12 @@ class Memory
         return Instruction::fromBytes($this->memory[$address], $this->memory[$address+1]);
     }
 
-    public function getMemoryValue(int $address): ?string
+    public function getMemoryValue(int $address): int
     {
         return $this->memory[$address];
     }
 
-    public function setMemoryValue(int $address, string $value): void
+    public function setMemoryValue(int $address, int $value): void
     {
         $this->memory[$address] = $value;
     }

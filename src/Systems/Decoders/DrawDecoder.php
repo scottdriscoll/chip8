@@ -23,28 +23,27 @@ class DrawDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return $instruction->nibble1 === 'd';
+        return $instruction->nibble1 === 0xd;
     }
 
     public function execute(Instruction $instruction): void
     {
-        $vx = $instruction->nibble2Int;
-        $vy = $instruction->nibble3Int;
-        $lines = $instruction->nibble4Int;
-        $address = hexdec($this->registers->getIndexRegister());
+        $vx = $instruction->nibble2;
+        $vy = $instruction->nibble3;
+        $lines = $instruction->nibble4;
+        $address = $this->registers->getIndexRegister();
         $pixelsToggled = false;
 
         // Turn off VF
-        $this->registers->setGeneralRegister(0xF, '0');
+        $this->registers->setGeneralRegister(0xF, 0);
 
         for ($line = 0; $line < $lines; $line++) {
             $sprite = $this->memory->getMemoryValue($address + $line);
             $this->writeDebugOutput("Sprite: $sprite\n");
-            $sprite = $sprite ? hexdec($sprite) : 0;
             $this->writeDebugOutput("SpriteInt: $sprite\n");
 
-            $x = hexdec($this->registers->getGeneralRegister($vx)) & (Display::WIDTH - 1);
-            $y = hexdec($this->registers->getGeneralRegister($vy)) & (Display::HEIGHT - 1);
+            $x = $this->registers->getGeneralRegister($vx) & (Display::WIDTH - 1);
+            $y = $this->registers->getGeneralRegister($vy) & (Display::HEIGHT - 1);
             $this->writeDebugOutput("Drawing sprite $sprite at $x, $y\n");
 
             for ($i = 0; $i < 8; $i++) {
@@ -61,7 +60,7 @@ class DrawDecoder extends AbstractDecoder implements DecoderInterface
         }
 
         if ($pixelsToggled) {
-            $this->registers->setGeneralRegister(0xF, '1');
+            $this->registers->setGeneralRegister(0xF, 0x1);
         }
 
         $this->display->draw();

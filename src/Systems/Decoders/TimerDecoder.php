@@ -16,21 +16,21 @@ class TimerDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return $instruction->nibble1 === 'f' && in_array($instruction->byte2, ['07',  '15', '18']);
+        return $instruction->nibble1 === 0xf && in_array($instruction->byte2, [0x07,  0x15, 0x18]);
     }
 
     public function execute(Instruction $instruction): void
     {
         switch ($instruction->byte2) {
-            case '07':
-                $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($this->timer->getDelayTimer()));
+            case 0x07:
+                $this->registers->setGeneralRegister($instruction->nibble2, $this->timer->getDelayTimer());
                 break;
-            case '15':
-                $vx = hexdec($this->registers->getGeneralRegister($instruction->nibble2Int));
+            case 0x15:
+                $vx = $this->registers->getGeneralRegister($instruction->nibble2);
                 $this->timer->setDelayTimer($vx);
                 break;
-            case '18':
-                $vx = hexdec($this->registers->getGeneralRegister($instruction->nibble2Int));
+            case 0x18:
+                $vx = $this->registers->getGeneralRegister($instruction->nibble2);
                 $this->timer->setSoundTimer($vx);
                 break;
         }

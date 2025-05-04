@@ -7,38 +7,36 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
 #[Exclude]
 class Instruction
 {
-    public string $byte1;
-    public int $byte1Int;
-    public string $byte2;
-    public int $byte2Int;
-    public string $nibble1;
-    public int $nibble1Int;
-    public string $nibble2;
-    public int $nibble2Int;
-    public string $nibble3;
-    public int $nibble3Int;
-    public string $nibble4;
-    public int $nibble4Int;
-    public string $address;
-    public int $addressInt;
+    public function __construct(
+        public int $byte1 = 0,
+        public int $byte2 = 0,
+        public int $nibble1 = 0,
+        public int $nibble2 = 0,
+        public int $nibble3 = 0,
+        public int $nibble4 = 0,
+        public int $address = 0
+    ) {
+    }
 
-    public static function fromBytes(string $b1, string $b2): self
+    public static function fromBytes(int $b1, int $b2): self
     {
         $instruction = new self();
         $instruction->byte1 = $b1;
-        $instruction->byte1Int = hexdec($b1);
         $instruction->byte2 = $b2;
-        $instruction->byte2Int = hexdec($b2);
-        $instruction->nibble1 = substr($b1, 0, 1);
-        $instruction->nibble1Int = hexdec($instruction->nibble1);
-        $instruction->nibble2 = substr($b1, 1, 1);
-        $instruction->nibble2Int = hexdec($instruction->nibble2);
-        $instruction->nibble3 = substr($b2, 0, 1);
-        $instruction->nibble3Int = hexdec($instruction->nibble3);
-        $instruction->nibble4 = substr($b2, 1, 1);
-        $instruction->nibble4Int = hexdec($instruction->nibble4);
-        $instruction->address = $instruction->nibble2 . substr($b2, 0, 2);
-        $instruction->addressInt = hexdec($instruction->address);
+        $instruction->nibble1 = ($b1 >> 4) & 0xF;
+        $instruction->nibble2 = $b1 & 0xF;
+        $instruction->nibble3 = ($b2 >> 4) & 0xF;
+        $instruction->nibble4 = $b2 & 0xF;
+        $instruction->address = ($instruction->nibble2 << 8) | $b2;
+
+        // ensure proper sizes
+        $instruction->byte1 = $instruction->byte1 & 0xff;
+        $instruction->byte2 = $instruction->byte2 & 0xff;
+        $instruction->nibble1 = $instruction->nibble1 & 0xf;
+        $instruction->nibble2 = $instruction->nibble2 & 0xf;
+        $instruction->nibble3 = $instruction->nibble3 & 0xf;
+        $instruction->nibble4 = $instruction->nibble4 & 0xf;
+        $instruction->address = $instruction->address & 0xfff;
 
         return $instruction;
     }

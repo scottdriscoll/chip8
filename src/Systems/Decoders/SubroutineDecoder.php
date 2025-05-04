@@ -3,8 +3,6 @@
 namespace App\Systems\Decoders;
 
 use App\Models\Instruction;
-use App\Systems\Decoders\AbstractDecoder;
-use App\Systems\Decoders\DecoderInterface;
 use App\Systems\ProgramCounter;
 use App\Systems\Stack;
 
@@ -18,14 +16,14 @@ class SubroutineDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return in_array($instruction->nibble1, ['0', '2']);
+        return ($instruction->byte1 === 0 && $instruction->byte2 === 0xee) || ($instruction->nibble1 === 0x2);
     }
 
     public function execute(Instruction $instruction): void
     {
-        if ($instruction->nibble1 === '2') {
+        if ($instruction->nibble1 === 0x2) {
             $this->stack->push($this->programCounter->get());
-            $this->programCounter->set($instruction->addressInt);
+            $this->programCounter->set($instruction->address);
         } else {
             $this->programCounter->set($this->stack->pop());
         }

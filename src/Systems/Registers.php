@@ -7,27 +7,27 @@ class Registers
     const REGISTER_SIZE = 16;
 
     /**
-     * @var array<int<0,15>, string|null>
+     * @var array<int<0,15>, int>
      */
-    private array $generalRegisters = [];
+    private array $generalRegisters;
 
-    private ?string $indexRegister = null;
+    private int $indexRegister = 0;
 
     public function __construct()
     {
-        $this->generalRegisters = array_fill(0, self::REGISTER_SIZE, null);
+        $this->generalRegisters = array_fill(0, self::REGISTER_SIZE, 0);
     }
 
-    public function setGeneralRegister(int $index, string $value): void
+    public function setGeneralRegister(int $index, int $value): void
     {
         if ($index < 0 || $index >= self::REGISTER_SIZE) {
             throw new \InvalidArgumentException('General register index must be between 0 and 15.');
         }
 
-        $this->generalRegisters[$index] = $value;
+        $this->generalRegisters[$index] = $value & 0xff;
     }
 
-    public function getGeneralRegister(int $index): ?string
+    public function getGeneralRegister(int $index): int
     {
         if ($index < 0 || $index >= self::REGISTER_SIZE) {
             throw new \InvalidArgumentException('General register index must be between 0 and 15.');
@@ -36,13 +36,13 @@ class Registers
         return $this->generalRegisters[$index];
     }
 
-    public function setIndexRegister(string $value): void
+    public function setIndexRegister(int $value): void
     {
-        $this->indexRegister = $value;
+        $this->indexRegister = $value & 0xfff;
     }
 
-    public function getIndexRegister(): ?string
+    public function getIndexRegister(): int
     {
-        return $this->indexRegister;
+        return $this->indexRegister ?? 0;
     }
 }

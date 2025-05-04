@@ -11,7 +11,7 @@ class KeyboardDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return $instruction->nibble1 === 'e';
+        return $instruction->nibble1 === 0xe;
     }
 
     public function execute(Instruction $instruction): void

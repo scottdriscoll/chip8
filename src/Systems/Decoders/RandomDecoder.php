@@ -16,13 +16,13 @@ class RandomDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return $instruction->nibble1 === 'c';
+        return $instruction->nibble1 === 0xc;
     }
 
     public function execute(Instruction $instruction): void
     {
-        $result = rand(0, 0xff) & $instruction->byte2Int;
-        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($result));
+        $result = rand(0, 0xff) & $instruction->byte2;
+        $this->registers->setGeneralRegister($instruction->nibble2, $result);
     }
 
     public function name(): string

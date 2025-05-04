@@ -14,7 +14,7 @@ class ClearScreenDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return $instruction->byte1 === '00' && $instruction->byte2 === 'e0';
+        return $instruction->byte1 === 0 && $instruction->byte2 === 0xe0;
     }
 
     public function execute(Instruction $instruction): void
