@@ -21,6 +21,6 @@ class ProgramCounter
 
     public function set(int $pc): void
     {
-        $this->pc = $pc;
+        $this->pc = $pc & 0xfff;
     }
 }

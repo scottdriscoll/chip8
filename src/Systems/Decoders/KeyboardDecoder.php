@@ -16,7 +16,7 @@ class KeyboardDecoder extends AbstractDecoder implements DecoderInterface
 
     public function execute(Instruction $instruction): void
     {
-        throw new \Exception('Not implemented');
+
     }
 
     public function name(): string

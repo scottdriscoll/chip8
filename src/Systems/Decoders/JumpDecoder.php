@@ -4,11 +4,13 @@ namespace App\Systems\Decoders;
 
 use App\Models\Instruction;
 use App\Systems\ProgramCounter;
+use App\Systems\Registers;
 
 class JumpDecoder extends AbstractDecoder implements DecoderInterface
 {
     public function __construct(
         private readonly ProgramCounter $programCounter,
+        private readonly Registers $registers,
     ) {
     }
 
@@ -23,8 +25,9 @@ class JumpDecoder extends AbstractDecoder implements DecoderInterface
             $this->writeDebugOutput("Jumping to {$instruction->address}\n");
             $this->programCounter->set($instruction->address);
         } else {
-            throw new \Exception('Jump to V0 not supported');
-
+            // Jump with offset
+            $v0 = $this->registers->getGeneralRegister(0x0);
+            $this->programCounter->set($instruction->address + $v0);
         }
     }
 
