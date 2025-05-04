@@ -35,7 +35,7 @@ class DrawDecoder extends AbstractDecoder implements DecoderInterface
         $pixelsToggled = false;
 
         // Turn off VF
-        $this->registers->setGeneralRegister(0xF, 0);
+        $this->registers->setFlagRegister(0);
 
         for ($line = 0; $line < $lines; $line++) {
             $sprite = $this->memory->getMemoryValue($address + $line);
@@ -60,7 +60,7 @@ class DrawDecoder extends AbstractDecoder implements DecoderInterface
         }
 
         if ($pixelsToggled) {
-            $this->registers->setGeneralRegister(0xF, 0x1);
+            $this->registers->setFlagRegister(0x1);
         }
 
         $this->display->draw();

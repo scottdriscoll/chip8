@@ -45,4 +45,14 @@ class Registers
     {
         return $this->indexRegister ?? 0;
     }
+
+    public function setFlagRegister(int $value): void
+    {
+        $this->setGeneralRegister(0xf, $value);
+    }
+
+    public function getFlagRegister(): int
+    {
+        return $this->getGeneralRegister(0xf);
+    }
 }

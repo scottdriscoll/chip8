@@ -85,9 +85,9 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
         $val = $vx + $vy;
         $this->registers->setGeneralRegister($instruction->nibble2, $val);
         if ($val > 0xFF) {
-            $this->registers->setGeneralRegister(0xF, 0x1);
+            $this->registers->setFlagRegister(0x1);
         } else {
-            $this->registers->setGeneralRegister(0xF, 0);
+            $this->registers->setFlagRegister(0);
         }
     }
 
@@ -95,13 +95,13 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
     {
         $vx = $this->registers->getGeneralRegister($instruction->nibble2);
         $vy = $this->registers->getGeneralRegister($instruction->nibble3);
-        $this->registers->setGeneralRegister(0xF, 0x1);
+        $this->registers->setFlagRegister(0x1);
         $newVal = $vx - $vy;
         $this->registers->setGeneralRegister($instruction->nibble2, $newVal);
         if ($vx > $vy) {
-            $this->registers->setGeneralRegister(0xF, 0x1);
+            $this->registers->setFlagRegister(0x1);
         } elseif ($vy > $vx) {
-            $this->registers->setGeneralRegister(0xF, 0);
+            $this->registers->setFlagRegister(0);
         }
     }
 
@@ -109,13 +109,13 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
     {
         $vx = $this->registers->getGeneralRegister($instruction->nibble2);
         $vy = $this->registers->getGeneralRegister($instruction->nibble3);
-        $this->registers->setGeneralRegister(0xF, 0x1);
+        $this->registers->setFlagRegister(0x1);
         $newVal = $vy - $vx;
         $this->registers->setGeneralRegister($instruction->nibble2, $newVal);
         if ($vy > $vx) {
-            $this->registers->setGeneralRegister(0xF, 0x1);
+            $this->registers->setFlagRegister(0x1);
         } elseif ($vx > $vy) {
-            $this->registers->setGeneralRegister(0xF, 0);
+            $this->registers->setFlagRegister(0);
         }
     }
 
@@ -126,10 +126,10 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
         $this->registers->setGeneralRegister($instruction->nibble2, $val);
 
         if ($left) {
-            $this->registers->setGeneralRegister(0xF, (($vx & 0x80) >> 7) ? 0x1 : 0);
-            $this->writeDebugOutput("Before = $vx, new = " . ($val & 0xff) .", shifted = " . $this->registers->getGeneralRegister(0xF) . "\n");
+            $this->registers->setFlagRegister((($vx & 0x80) >> 7) ? 0x1 : 0);
+            $this->writeDebugOutput("Before = $vx, new = " . ($val & 0xff) .", shifted = " . $this->registers->getFlagRegister() . "\n");
         } else {
-            $this->registers->setGeneralRegister(0xF, ($vx & 0x1) ? 0x1 : 0);
+            $this->registers->setFlagRegister(($vx & 0x1) ? 0x1 : 0);
         }
     }
 }
