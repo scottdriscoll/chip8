@@ -95,6 +95,7 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
     {
         $vx = $this->registers->getGeneralRegister($instruction->nibble2);
         $vy = $this->registers->getGeneralRegister($instruction->nibble3);
+        $this->registers->setGeneralRegister(0xF, 0x1);
         $newVal = $vx - $vy;
         $this->registers->setGeneralRegister($instruction->nibble2, $newVal);
         if ($vx > $vy) {
@@ -108,6 +109,7 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
     {
         $vx = $this->registers->getGeneralRegister($instruction->nibble2);
         $vy = $this->registers->getGeneralRegister($instruction->nibble3);
+        $this->registers->setGeneralRegister(0xF, 0x1);
         $newVal = $vy - $vx;
         $this->registers->setGeneralRegister($instruction->nibble2, $newVal);
         if ($vy > $vx) {
