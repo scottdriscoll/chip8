@@ -49,7 +49,7 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
 
     private function set(Instruction $instruction): void
     {
-        $this->registers->setGeneralRegister($instruction->nibble2Int, $this->registers->getGeneralRegister($instruction->nibble3Int));
+        $this->registers->setGeneralRegister($instruction->nibble2Int, $this->registers->getGeneralRegister($instruction->nibble3Int ?? ''));
     }
 
     private function vxORvy(Instruction $instruction): void
@@ -86,12 +86,11 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
 
         $val = $vx + $vy;
         if ($val > 0xFF) {
-            $val -= 0x100;
             $this->registers->setGeneralRegister(0xF, '1');
         } else {
             $this->registers->setGeneralRegister(0xF, '0');
         }
-        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($val));
+        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($val&0xff));
     }
 
     private function vxSubvy(Instruction $instruction): void
@@ -103,11 +102,8 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
             $this->registers->setGeneralRegister(0xF, '1');
         } elseif ($vy > $vx) {
             $this->registers->setGeneralRegister(0xF, '0');
-            if ($newVal < 0) {
-                $newVal += 0x100;
-            }
         }
-        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($newVal));
+        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($newVal&0xff));
     }
 
     private function vxSubnvy(Instruction $instruction): void
@@ -119,30 +115,28 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
             $this->registers->setGeneralRegister(0xF, '1');
         } elseif ($vx > $vy) {
             $this->registers->setGeneralRegister(0xF, '0');
-            if ($newVal < 0) {
-                $newVal += 0x100;
-            }
         }
-        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($newVal));
+        $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($newVal&0xff));
     }
 
     private function shift(Instruction $instruction, bool $left): void
     {
-        $vx = hexdec($this->registers->getGeneralRegister($instruction->nibble2Int));
-        $this->writeDebugOutput("Shifting $vx $instruction->nibble4 $left\n");
-        $this->writeDebugOutput("vx: $vx\n");
-        $val = $left ? $vx << 1 : $vx >> 1;
-        if ($left) {
-            $this->registers->setGeneralRegister(0xF, ($vx & 0x80) ? '1' : '0');
-            $this->writeDebugOutput("vx & 0x80: " . ($vx & 0x80) . "\n");
-        } else {
-            $this->registers->setGeneralRegister(0xF, ($vx & 0x1) ? '1' : '0');
-            $this->writeDebugOutput("vx & 0x1: " . ($vx & 0x1) . "\n");
-        }
-        if ($val > 0xFF) {
-            $val -= 0x100;
-        }
-        $this->writeDebugOutput("newVal: $val\n");
+        $spam = 1;
+        if ($spam) echo "\nShift $instruction->nibble4 $left from $instruction->nibble2\n";
+        if ($spam) echo "$instruction->byte1$instruction->byte2\n";
+        $vy = hexdec($this->registers->getGeneralRegister($instruction->nibble2Int));
+        if ($spam) echo "vy: $vy \n";
+        $val = $left ? ($vy << 1) : ($vy >> 1);
+        $val &= 0xff;
+        if ($spam) echo "val: $val \n";
+
+        if ($spam) echo "final: " . dechex($val) . " \n";
         $this->registers->setGeneralRegister($instruction->nibble2Int, dechex($val));
+
+        if ($left) {
+            $this->registers->setGeneralRegister(0xF, (($vy >> 7) & 0x1) ? '1' : '0');
+        } else {
+            $this->registers->setGeneralRegister(0xF, ($vy & 0x1) ? '1' : '0');
+        }
     }
 }

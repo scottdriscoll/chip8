@@ -3,8 +3,6 @@
 namespace App\Systems\Decoders;
 
 use App\Models\Instruction;
-use App\Systems\Decoders\AbstractDecoder;
-use App\Systems\Decoders\DecoderInterface;
 use App\Systems\Registers;
 use App\Systems\Timer;
 

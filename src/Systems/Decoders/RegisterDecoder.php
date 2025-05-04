@@ -17,7 +17,7 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return in_array($instruction->nibble1, ['6', '7', 'a']) || ($instruction->nibble1 == 'f' && in_array($instruction->byte2, ['55', '65', '33']));
+        return in_array($instruction->nibble1, ['6', '7', 'a']) || ($instruction->nibble1 == 'f' && in_array($instruction->byte2, ['55', '65', '33', '1e']));
     }
 
     public function execute(Instruction $instruction): void
@@ -47,6 +47,8 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
                     $this->loadRegistersFromMemory($instruction);
                 } elseif ($instruction->byte2 === '33') {
                     $this->decimalConversion($instruction);
+                } elseif ($instruction->byte2 === '1e') {
+                    $this->addToIndex($instruction);
                 }
                 break;
         }
@@ -78,6 +80,12 @@ class RegisterDecoder extends AbstractDecoder implements DecoderInterface
         foreach (str_split($str) as $i => $char) {
             $this->memory->setMemoryValue($idx + $i, $char);
         }
+    }
+
+    private function addToIndex(Instruction $instruction): void
+    {
+        $idx = hexdec($this->registers->getIndexRegister());
+        $this->registers->setIndexRegister(dechex($idx + $instruction->byte2Int));
     }
 
     public function name(): string
