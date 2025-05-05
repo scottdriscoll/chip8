@@ -59,6 +59,7 @@ class GameEngine
             $elapsed = (microtime(true) - $startTimer) * 1000;
 
             $this->timer->elapsed($elapsed);
+            usleep(1000 - $elapsed);
         }
     }
 

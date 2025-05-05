@@ -39,16 +39,13 @@ class DrawDecoder extends AbstractDecoder implements DecoderInterface
 
         for ($line = 0; $line < $lines; $line++) {
             $sprite = $this->memory->getMemoryValue($address + $line);
-            $this->writeDebugOutput("Sprite: $sprite\n");
-            $this->writeDebugOutput("SpriteInt: $sprite\n");
-
             $x = $this->registers->getGeneralRegister($vx) & (Display::WIDTH - 1);
             $y = $this->registers->getGeneralRegister($vy) & (Display::HEIGHT - 1);
             $this->writeDebugOutput("Drawing sprite $sprite at $x, $y\n");
 
             for ($i = 0; $i < 8; $i++) {
                 $bitEnabled = (bool) ($sprite & $this->bits[$i]);
-                $oldEnabled = $this->display->pixelEnabled($x + $i, $y + $i);
+                $oldEnabled = $this->display->pixelEnabled($x + $i, $y + $line);
                 $newEnabled = ($bitEnabled xor $oldEnabled);
                 if ($newEnabled && !$oldEnabled) {
                     $pixelsToggled = true;
