@@ -79,6 +79,22 @@ Running the emulator with the default parameters should display the following ou
 
 ---
 
+## Commands not yet implemented
+- **Keyboard**: Everything involving keyboard
+- **Sound**: Everything involving sound, (f002, fx3a)
+
+---
+
+## Future plans, other CHIP variant commands, such as:
+
+- **Scrolling**: 00cn, 00dn (not chip8)
+- **fx01**: selecting bit planes (not chip8)
+- **hires mode (256x64 terminal size)**: technically we support this already. Would almost certainly need to lower your font size.
+
+Reference [here](https://chip8.gulrak.net/)
+
+---
+
 ## License
 
 This project is provided as-is for educational purposes.  

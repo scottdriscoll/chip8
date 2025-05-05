@@ -23,6 +23,13 @@ class DrawDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
+        if ($instruction->byte1 === 0 && $instruction->byte2 === 0xfe) {
+            throw new \Exception('Lowres mode not implemented');
+        }
+        if ($instruction->byte1 === 0 && $instruction->byte2 === 0xff) {
+            throw new \Exception('Hires mode not implemented');
+        }
+
         return $instruction->nibble1 === 0xd;
     }
 
