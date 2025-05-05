@@ -4,6 +4,7 @@ namespace App\Systems;
 
 use App\Helpers\OutputHelper;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class GameEngine
 {
@@ -17,6 +18,7 @@ class GameEngine
         private readonly Display $display,
         private readonly OutputHelper $outputHelper,
         private readonly Timer $timer,
+        #[Autowire(env: 'APP_ENV')] private readonly string $appEnv
     ) {
     }
 
@@ -59,7 +61,10 @@ class GameEngine
             $elapsed = (microtime(true) - $startTimer) * 1000;
 
             $this->timer->elapsed($elapsed);
-           // usleep(2000 - $elapsed);
+
+            if ($this->appEnv !== 'test') {
+                usleep(2000 - $elapsed);
+            }
         }
     }
 
