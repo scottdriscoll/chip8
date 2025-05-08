@@ -4,7 +4,7 @@ namespace App\Systems;
 
 class Timer
 {
-    private const FREQUENCY = 1000 / 60;
+    private const float FREQUENCY = .01667; // 60 hz
     private float $startTime = 0;
     private int $delayTimer = 0;
     private int $soundTimer = 0;
@@ -21,7 +21,7 @@ class Timer
     {
         $this->startTime += $elapsed;
         if ($this->startTime >= self::FREQUENCY) {
-            $this->startTime -= self::FREQUENCY;
+            $this->startTime = 0;
             if ($this->delayTimer > 0) {
                 $this->delayTimer--;
             }

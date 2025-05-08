@@ -26,7 +26,7 @@ use App\Systems\Registers;
  */
 class KeyboardDecoder extends AbstractDecoder implements DecoderInterface
 {
-    private const float DURATION = 0.05;
+    private const float DURATION = 0.06;
 
     /**
      * @var array<int|string,int> $mapping
@@ -92,7 +92,8 @@ class KeyboardDecoder extends AbstractDecoder implements DecoderInterface
         if ($key !== null) {  // key is pressed, just update now and restart timer
             $this->keyDown = $key;
             $this->time = microtime(true);
-        } elseif ($this->keyDown !== null && ((microtime(true) - $this->time) >= self::DURATION)) {  // no key is pressed, only erase after DURATION ms
+        } elseif ($this->keyDown !== null && ((microtime(true) - $this->time) >= self::DURATION)) {
+            // no key is pressed, only erase after DURATION ms
             $this->keyDown = null;
         }
     }
@@ -108,7 +109,7 @@ class KeyboardDecoder extends AbstractDecoder implements DecoderInterface
 
         if ($instruction->byte2 === 0x9e && $this->keyDown === $vx) {
             $this->programCounter->increment();
-        } elseif ($instruction->byte2 === 0xa1 && $this->keyDown !== null && $this->keyDown !== $vx) {
+        } elseif ($instruction->byte2 === 0xa1 && $this->keyDown !== $vx) {
             $this->programCounter->increment();
         }
     }

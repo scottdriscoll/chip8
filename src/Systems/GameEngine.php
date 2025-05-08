@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class GameEngine
 {
-    private const int TARGET_IPS = 700;
+    private const float TARGET_IPS = 700;
     private const float FRAME_DURATION = 1 / self::TARGET_IPS;
 
     private string $debugOutputPath = '';
@@ -47,12 +47,10 @@ class GameEngine
             $startTimer = microtime(true);
             $this->keyboard->testKeyDown();
 
-            $now = microtime(true);
-            $elapsed = $now - $lastTime;
+            $elapsed = $startTimer - $lastTime;
 
             // limit to 700 instructions per second
             if ($elapsed >= self::FRAME_DURATION) {
-                $lastTime = $now;
 
                 $instruction = $this->memory->fetchInstruction($this->programCounter->get());
                 $this->programCounter->increment();
@@ -72,9 +70,10 @@ class GameEngine
                 if ($this->maxCycles && $counter >= $this->maxCycles) {
                     break;
                 }
+                $lastTime = microtime(true);
             }
 
-            $elapsed = (microtime(true) - $startTimer) * 1000;
+            $elapsed = microtime(true) - $startTimer;
             $this->timer->elapsed($elapsed);
         }
     }
