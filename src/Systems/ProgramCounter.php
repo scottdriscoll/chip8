@@ -14,6 +14,11 @@ class ProgramCounter
         $this->pc += 2;
     }
 
+    public function decrement(): void
+    {
+        $this->pc -= 2;
+    }
+
     public function get(): int
     {
         return $this->pc;

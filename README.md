@@ -80,8 +80,8 @@ Running the emulator with the default parameters should display the following ou
 ---
 
 ## Commands not yet implemented
-- **Keyboard**: Everything involving keyboard
 - **Sound**: Everything involving sound, (f002, fx3a)
+- **timer** game runs too fast still
 
 ---
 
