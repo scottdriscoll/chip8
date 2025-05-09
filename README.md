@@ -49,6 +49,30 @@ php bin/console app:chip8 [path] [debug-output-path] [--max-cycles=N]
 
 ---
 
+### Keyboard
+
+The original keypad supported only hexadecimal characters, so 0-9,a-f. The keys are normally laid out in a grid as such:
+
+```text
+123C
+456D
+789E
+A0BF
+```
+
+This would be extremely annoying to use on a QWERTY keyboard, so instead we map the following keys to the above:
+
+```text
+1234
+QWER
+ASDF
+ZXCV
+```
+
+So 'Q' will map to '4', 'W' to '5', and so on. I have not tested on non-qwerty layouts.
+
+---
+
 ## Finding ROMs
 
 You are responsible for providing your own Chip8 ROM files.  
@@ -80,18 +104,15 @@ Running the emulator with the default parameters should display the following ou
 ---
 
 ## Commands not yet implemented
-- **Sound**: Everything involving sound, (f002, fx3a)
-- **timer** game runs too fast still
+- **Sound**: Everything involving sound, (f002, fx3a). If I get around to this, I'll probably just make a visual flash in place of actual audio.
 
 ---
 
-## Future plans, other CHIP variant commands, such as:
+## Compatibility
 
-- **Scrolling**: 00cn, 00dn (not chip8)
-- **fx01**: selecting bit planes (not chip8)
-- **hires mode (256x64 terminal size)**: technically we support this already. Would almost certainly need to lower your font size.
+Tested and works normally in a native linux terminal.
 
-Reference [here](https://chip8.gulrak.net/)
+Also tested and working in WSL2 for windows, however there are random 2-3 second freezes that I haven't figured out yet.
 
 ---
 
