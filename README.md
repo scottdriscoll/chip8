@@ -114,6 +114,8 @@ Tested and works normally in a native linux terminal.
 
 Also tested and working in WSL2 for windows, however there are random 2-3 second freezes that I haven't figured out yet.
 
+Update: Updating to latest WSL2 fixes freezes.
+
 ---
 
 ## License
