@@ -21,7 +21,7 @@ class RandomDecoder extends AbstractDecoder implements DecoderInterface
 
     public function execute(Instruction $instruction): void
     {
-        $result = rand(0, 0xff) & $instruction->byte2;
+        $result = random_int(0, 0xff) & $instruction->byte2;
         $this->registers->setGeneralRegister($instruction->nibble2, $result);
     }
 

@@ -5,6 +5,7 @@ namespace App\Systems\Decoders;
 use App\Models\Instruction;
 use App\Systems\Decoders\AbstractDecoder;
 use App\Systems\Decoders\DecoderInterface;
+use App\Systems\GameClock;
 use App\Systems\ProgramCounter;
 use App\Systems\Registers;
 
@@ -68,8 +69,9 @@ class KeyboardDecoder extends AbstractDecoder implements DecoderInterface
     public function __construct(
         private readonly ProgramCounter $programCounter,
         private readonly Registers $registers,
+        private readonly GameClock $gameClock,
     ) {
-        $this->time = microtime(true);
+        $this->time = $this->gameClock->now();
     }
 
     public function supports(Instruction $instruction): bool
@@ -94,14 +96,14 @@ class KeyboardDecoder extends AbstractDecoder implements DecoderInterface
         }
 
         $this->keyDown = $this->mapping[$key];
-        $this->time = microtime(true);
+        $this->time = $this->gameClock->now();
 
         return true;
     }
 
     public function tick(): void
     {
-        if ($this->keyDown !== null && ((microtime(true) - $this->time) >= self::DURATION)) {
+        if ($this->keyDown !== null && (($this->gameClock->now() - $this->time) >= self::DURATION)) {
             $this->keyDown = null;
         }
     }

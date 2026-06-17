@@ -3,6 +3,7 @@
 namespace App\Tui;
 
 use App\Systems\Decoders\KeyboardDecoder;
+use App\Systems\GameClock;
 use App\Systems\GameEngine;
 use App\Systems\Timer;
 use App\Tui\Widget\Chip8DisplayWidget;
@@ -17,6 +18,7 @@ final readonly class Chip8TuiRunner
         private GameEngine $gameEngine,
         private KeyboardDecoder $keyboardDecoder,
         private Timer $timer,
+        private GameClock $gameClock,
         private Chip8ViewStateFactory $stateFactory,
     ) {
     }
@@ -58,7 +60,7 @@ final readonly class Chip8TuiRunner
 
         $tui->onTick(function () use ($tui, $display, &$stopped, &$soundActive, &$lastBellAt): bool {
             $running = $this->gameEngine->tick();
-            $now = microtime(true);
+            $now = $this->gameClock->now();
             $timerSoundActive = $this->timer->getSoundTimer() > 0;
 
             if ($timerSoundActive && (!$soundActive || ($now - $lastBellAt) >= 0.15)) {

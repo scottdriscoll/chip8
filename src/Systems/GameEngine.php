@@ -22,6 +22,7 @@ class GameEngine
         private readonly ProgramCounter $programCounter,
         private readonly Timer $timer,
         private readonly KeyboardDecoder $keyboard,
+        private readonly GameClock $gameClock,
     ) {
     }
 
@@ -38,7 +39,7 @@ class GameEngine
         $this->memory->loadRom($romPath);
         $this->counter = 0;
         $this->running = true;
-        $this->lastInstructionTime = microtime(true);
+        $this->lastInstructionTime = $this->gameClock->now();
         $this->lastTimerTime = $this->lastInstructionTime;
     }
 
@@ -48,7 +49,7 @@ class GameEngine
             return false;
         }
 
-        $now ??= microtime(true);
+        $now ??= $this->gameClock->now();
         $this->keyboard->tick();
         $this->timer->elapsed(max(0, $now - $this->lastTimerTime));
         $this->lastTimerTime = $now;

@@ -121,7 +121,7 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
 
     private function shift(Instruction $instruction, bool $left): void
     {
-        $vx = $this->registers->getGeneralRegister($instruction->nibble3);
+        $vx = $this->registers->getGeneralRegister($instruction->nibble2);
         $val = $left ? ($vx << 1) : ($vx >> 1);
         $this->registers->setGeneralRegister($instruction->nibble2, $val);
 
