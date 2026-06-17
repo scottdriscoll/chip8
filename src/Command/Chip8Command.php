@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Systems\GameEngine;
+use App\Tui\Chip8TuiRunner;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -17,8 +18,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class Chip8Command extends Command
 {
-    public function __construct(private readonly GameEngine $gameEngine)
-    {
+    public function __construct(
+        private readonly GameEngine $gameEngine,
+        private readonly Chip8TuiRunner $tuiRunner,
+    ) {
         parent::__construct();
     }
 
@@ -39,15 +42,17 @@ class Chip8Command extends Command
         $maxCycles = $input->getOption('max-cycles');
 
         try {
-            register_shutdown_function('\App\Helpers\OutputHelper::showCursor');
             if ($debugPath) {
                 $this->gameEngine->setDebugOutputPath($debugPath);
             }
             if ($maxCycles) {
-                $this->gameEngine->setMaxCycles($maxCycles);
+                $this->gameEngine->setMaxCycles((int) $maxCycles);
+                $this->gameEngine->run($path);
+
+                return Command::SUCCESS;
             }
-            $this->gameEngine->setOutput($output);
-            $this->gameEngine->run($path);
+
+            $this->tuiRunner->run($path);
         } catch (\Exception $e) {
             $io->error($e->getMessage());
         }

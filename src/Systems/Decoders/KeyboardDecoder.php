@@ -86,14 +86,22 @@ class KeyboardDecoder extends AbstractDecoder implements DecoderInterface
         }
     }
 
-    public function testKeyDown(): void
+    public function pressKey(string $key): bool
     {
-        $key = $this->mapping[$this->nonBlockingRead()] ?? null;
-        if ($key !== null) {  // key is pressed, just update now and restart timer
-            $this->keyDown = $key;
-            $this->time = microtime(true);
-        } elseif ($this->keyDown !== null && ((microtime(true) - $this->time) >= self::DURATION)) {
-            // no key is pressed, only erase after DURATION ms
+        $key = strtolower($key);
+        if (!array_key_exists($key, $this->mapping)) {
+            return false;
+        }
+
+        $this->keyDown = $this->mapping[$key];
+        $this->time = microtime(true);
+
+        return true;
+    }
+
+    public function tick(): void
+    {
+        if ($this->keyDown !== null && ((microtime(true) - $this->time) >= self::DURATION)) {
             $this->keyDown = null;
         }
     }
@@ -129,19 +137,4 @@ class KeyboardDecoder extends AbstractDecoder implements DecoderInterface
         $this->registers->setGeneralRegister($instruction->nibble2, $this->keyDown);
     }
 
-    private function nonBlockingRead(): ?string
-    {
-        $read = [STDIN];
-        $write = [];
-        $except = [];
-        $result = stream_select($read, $write, $except, 0);
-
-        if ($result === false || $result === 0) {
-            return null;
-        }
-
-        $key = stream_get_line(STDIN, 1);
-
-        return $key ?: null;
-    }
 }

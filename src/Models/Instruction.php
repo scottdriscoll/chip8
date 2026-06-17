@@ -43,6 +43,6 @@ class Instruction
 
     public function __toString(): string
     {
-        return $this->byte1 . $this->byte2;
+        return sprintf('%02x%02x', $this->byte1, $this->byte2);
     }
 }

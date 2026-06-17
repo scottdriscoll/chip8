@@ -16,7 +16,11 @@ class SkipConditionalDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return in_array($instruction->nibble1, [0x3, 0x4, 0x5, 0x9]);
+        if (in_array($instruction->nibble1, [0x3, 0x4], true)) {
+            return true;
+        }
+
+        return in_array($instruction->nibble1, [0x5, 0x9], true) && $instruction->nibble4 === 0x0;
     }
 
     public function execute(Instruction $instruction): void

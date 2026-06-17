@@ -6,15 +6,16 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "symfony/console": "7.2.*",
-        "symfony/dotenv": "7.2.*",
+        "symfony/console": "^8.1",
+        "symfony/dotenv": "^8.1",
         "symfony/flex": "^2.5",
-        "symfony/framework-bundle": "7.2.*",
-        "symfony/runtime": "7.2.*",
-        "symfony/yaml": "7.2.*"
+        "symfony/framework-bundle": "^8.1",
+        "symfony/runtime": "^8.1",
+        "symfony/tui": "^8.1",
+        "symfony/yaml": "^8.1"
     },
     "config": {
         "allow-plugins": {
@@ -66,15 +67,15 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.2.*"
+            "require": "8.1.*"
         }
     },
     "require-dev": {
         "phpstan/phpstan": "^2.1.14",
         "phpunit/phpunit": "^12.1.4",
-        "symfony/browser-kit": "7.2.*",
-        "symfony/css-selector": "7.2.*",
+        "symfony/browser-kit": "^8.1",
+        "symfony/css-selector": "^8.1",
         "symfony/maker-bundle": "^1.63.0",
-        "symfony/phpunit-bridge": "^7.2.6"
+        "symfony/phpunit-bridge": "^8.1"
     }
 }

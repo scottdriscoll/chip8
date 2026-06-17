@@ -54,7 +54,7 @@ class DrawDecoder extends AbstractDecoder implements DecoderInterface
                 $bitEnabled = (bool) ($sprite & $this->bits[$i]);
                 $oldEnabled = $this->display->pixelEnabled($x + $i, $y + $line);
                 $newEnabled = ($bitEnabled xor $oldEnabled);
-                if ($newEnabled && !$oldEnabled) {
+                if ($bitEnabled && $oldEnabled) {
                     $pixelsToggled = true;
                 }
 

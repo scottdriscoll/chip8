@@ -14,7 +14,7 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
 
     public function supports(Instruction $instruction): bool
     {
-        return $instruction->nibble1 === 0x8;
+        return $instruction->nibble1 === 0x8 && in_array($instruction->nibble4, [0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0xe], true);
     }
 
     public function execute(Instruction $instruction): void
@@ -36,7 +36,7 @@ class MathDecoder extends AbstractDecoder implements DecoderInterface
         } elseif ($instruction->nibble4 === 0x6 || $instruction->nibble4 === 0xe) {
             $this->shift($instruction, $instruction->nibble4 === 0xe);
         } else {
-            throw new \Exception("Unknown instruction in ShiftDecoder: $instruction->byte1$instruction->byte2");
+            throw new \Exception("Unknown instruction in MathDecoder: $instruction");
         }
     }
 

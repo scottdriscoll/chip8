@@ -43,7 +43,7 @@ class Registers
 
     public function getIndexRegister(): int
     {
-        return $this->indexRegister ?? 0;
+        return $this->indexRegister;
     }
 
     public function setFlagRegister(int $value): void

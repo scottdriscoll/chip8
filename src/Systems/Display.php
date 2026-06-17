@@ -2,88 +2,36 @@
 
 namespace App\Systems;
 
-use App\Helpers\OutputHelper;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class Display
 {
     public const WIDTH = 64;
     public const HEIGHT = 32;
-    private const HORIZONTAL_SCALE = 2;
-    private const SCREEN_UNIT = '<bg=green> </bg=green>';
-    private const ERASE_UNIT = '<bg=black> </bg=black>';
-
-    private ?OutputInterface $output = null;
 
     /**
-     * @var array<int, array<int, ScreenUnit>> $screen
+     * @var array<int, array<int, bool>> $screen
      */
-    private array $screen;
-
-    public function __construct(
-        private readonly OutputHelper $outputHelper,
-    ) {
-    }
+    private array $screen = [];
 
     #[Required]
     public function initialize(): void
     {
-        for ($y = 0; $y < self::HEIGHT; $y++) {
-            for ($x = 0; $x < self::WIDTH * self::HORIZONTAL_SCALE; $x++) {
-                $this->screen[$y][$x] = new ScreenUnit(nextValue: self::ERASE_UNIT);
-            }
-        }
-    }
-
-    public function setOutput(OutputInterface $output): void
-    {
-        $this->output = $output;
-    }
-
-    public function getOutput(): ?OutputInterface
-    {
-        return $this->output;
+        $this->clearScreen();
     }
 
     public function clearScreen(): void
     {
-        foreach ($this->screen as $row) {
-            foreach ($row as $unit) {
-                $unit->setNext(self::ERASE_UNIT);
-            }
-        }
-    }
-
-    public function nextFrame(): void
-    {
-        foreach ($this->screen as $row) {
-            foreach ($row as $unit) {
-                $unit->nextFrame();
+        for ($y = 0; $y < self::HEIGHT; $y++) {
+            for ($x = 0; $x < self::WIDTH; $x++) {
+                $this->screen[$y][$x] = false;
             }
         }
     }
 
     public function draw(): void
     {
-        $this->outputHelper->clear();
-        foreach ($this->screen as $y => $row) {
-            foreach ($row as $x => $unit) {
-                if ($unit->hasChanged()) {
-                    $this->outputHelper->moveCursorUp(100);
-                    $this->outputHelper->moveCursorFullLeft();
-                    if ($y > 0) {
-                        $this->outputHelper->moveCursorDown($y);
-                    }
-                    if ($x > 0) {
-                        $this->outputHelper->moveCursorRight($x);
-                    }
-                    $this->outputHelper->write($unit->getNext());
-                }
-            }
-        }
-        $this->nextFrame();
-        $this->outputHelper->dump();
+        // Rendering is handled by Symfony TUI. The emulator mutates this buffer.
     }
 
     public function pixelEnabled(int $x, int $y): bool
@@ -92,7 +40,7 @@ class Display
             return false;
         }
 
-        return $this->screen[$y][$x * self::HORIZONTAL_SCALE]->getCurrent() === self::SCREEN_UNIT;
+        return $this->screen[$y][$x] ?? false;
     }
 
     public function setEnabled(int $x, int $y, bool $enabled): void
@@ -101,19 +49,37 @@ class Display
             return;
         }
 
-        $newValue = $enabled ? self::SCREEN_UNIT : self::ERASE_UNIT;
-        for ($setX = $x * self::HORIZONTAL_SCALE; $setX < $x * self::HORIZONTAL_SCALE + self::HORIZONTAL_SCALE; $setX++) {
-            $this->screen[$y][$setX]->setNext($newValue);
-        }
+        $this->screen[$y][$x] = $enabled;
     }
 
     public function logScreen(): void
     {
         for ($y = 0; $y < self::HEIGHT; $y++) {
-            for ($x = 0; $x < self::WIDTH * self::HORIZONTAL_SCALE; $x++) {
-                echo "$y, $x, " . (int)$this->pixelEnabled($y, $x) . "\n";
+            for ($x = 0; $x < self::WIDTH; $x++) {
+                echo "$y, $x, " . (int) $this->pixelEnabled($x, $y) . "\n";
             }
         }
+    }
+
+    /**
+     * @return array<int, array<int, bool>>
+     */
+    public function getRows(): array
+    {
+        return $this->screen;
+    }
+
+    public function signature(): string
+    {
+        $parts = [];
+
+        foreach ($this->screen as $row) {
+            foreach ($row as $enabled) {
+                $parts[] = $enabled ? '1' : '0';
+            }
+        }
+
+        return hash('xxh3', implode('', $parts));
     }
 
     /**
@@ -124,8 +90,8 @@ class Display
         $arr = [];
 
         for ($y = 0; $y < self::HEIGHT; $y++) {
-            for ($x = 0; $x < self::WIDTH * self::HORIZONTAL_SCALE; $x++) {
-                $arr[$y][$x] = (int)$this->pixelEnabled($y, $x);
+            for ($x = 0; $x < self::WIDTH * 2; $x++) {
+                $arr[$y][$x] = (int) $this->pixelEnabled($y, $x);
             }
         }
 

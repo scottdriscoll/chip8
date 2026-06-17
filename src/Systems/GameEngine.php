@@ -2,10 +2,7 @@
 
 namespace App\Systems;
 
-use App\Helpers\OutputHelper;
 use App\Systems\Decoders\KeyboardDecoder;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class GameEngine
 {
@@ -14,68 +11,78 @@ class GameEngine
 
     private string $debugOutputPath = '';
     private ?int $maxCycles = null;
+    private int $counter = 0;
+    private bool $running = false;
+    private float $lastInstructionTime = 0.0;
+    private float $lastTimerTime = 0.0;
 
     public function __construct(
         private readonly Memory $memory,
         private readonly Decoder $decoder,
         private readonly ProgramCounter $programCounter,
-        private readonly Display $display,
-        private readonly OutputHelper $outputHelper,
         private readonly Timer $timer,
         private readonly KeyboardDecoder $keyboard,
     ) {
     }
 
-    public function setOutput(OutputInterface $output): void
-    {
-        $this->display->setOutput($output);
-        $this->outputHelper->setOutput($output);
-    }
-
     public function run(string $romPath): void
     {
-        if ($this->display->getOutput() === null) {
-            throw new \Exception('Output not set.');
+        $this->load($romPath);
+        while ($this->tick()) {
+            usleep(1000);
         }
+    }
 
+    public function load(string $romPath): void
+    {
         $this->memory->loadRom($romPath);
-        $counter = 0;
+        $this->counter = 0;
+        $this->running = true;
+        $this->lastInstructionTime = microtime(true);
+        $this->lastTimerTime = $this->lastInstructionTime;
+    }
 
-        $lastTime = microtime(true);
-
-        while (true) {
-            $startTimer = microtime(true);
-            $this->keyboard->testKeyDown();
-
-            $elapsed = $startTimer - $lastTime;
-
-            // limit to 700 instructions per second
-            if ($elapsed >= self::FRAME_DURATION) {
-
-                $instruction = $this->memory->fetchInstruction($this->programCounter->get());
-                $this->programCounter->increment();
-                $counter++;
-
-                try {
-                    $decoder = $this->decoder->decodeInstruction($instruction);
-                    if ($this->debugOutputPath) {
-                        file_put_contents($this->debugOutputPath, "\n" . $counter . ' ' . $instruction->byte1 . $instruction->byte2 . ' ' . $decoder->name() . "\n", FILE_APPEND);
-                    }
-                    $decoder->execute($instruction);
-                } catch (\Exception $e) {
-                    echo $e->getMessage() . "\n";
-                    break;
-                }
-
-                if ($this->maxCycles && $counter >= $this->maxCycles) {
-                    break;
-                }
-                $lastTime = microtime(true);
-            }
-
-            $elapsed = microtime(true) - $startTimer;
-            $this->timer->elapsed($elapsed);
+    public function tick(?float $now = null): bool
+    {
+        if (!$this->running) {
+            return false;
         }
+
+        $now ??= microtime(true);
+        $this->keyboard->tick();
+        $this->timer->elapsed(max(0, $now - $this->lastTimerTime));
+        $this->lastTimerTime = $now;
+
+        while (($now - $this->lastInstructionTime) >= self::FRAME_DURATION) {
+            $this->executeInstruction();
+            $this->lastInstructionTime += self::FRAME_DURATION;
+
+            if ($this->maxCycles && $this->counter >= $this->maxCycles) {
+                $this->running = false;
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function stop(): void
+    {
+        $this->running = false;
+    }
+
+    private function executeInstruction(): void
+    {
+        $instruction = $this->memory->fetchInstruction($this->programCounter->get());
+        $this->programCounter->increment();
+        $this->counter++;
+
+        $decoder = $this->decoder->decodeInstruction($instruction);
+        if ($this->debugOutputPath) {
+            file_put_contents($this->debugOutputPath, "\n" . $this->counter . ' ' . $instruction . ' ' . $decoder->name() . "\n", FILE_APPEND);
+        }
+        $decoder->execute($instruction);
     }
 
     public function setDebugOutputPath(string $path): void
