@@ -1,8 +1,8 @@
-# Chip8 Emulator (Symfony Console Command)
+# Chip8 Emulator (Symfony Console + TUI)
 
 ![CI](https://github.com/scottdriscoll/chip8/actions/workflows/php.yml/badge.svg)
 
-This is a simple **Chip8 emulator** built as a **Symfony Console Command**.  
+This is a simple **Chip8 emulator** built as a **Symfony Console Command** with Symfony TUI.  
 It runs entirely inside your terminal — please make sure your terminal window is at least **128x32** characters in size for proper display.
 
 ---
@@ -103,16 +103,9 @@ Running the emulator with the default parameters should display the following ou
 
 ---
 
-## Commands not yet implemented
-- **Sound**: Everything involving sound, (f002, fx3a). If I get around to this, I'll probably just make a visual flash in place of actual audio.
-
----
-
 ## Compatibility
 
 Tested and works normally in a native linux terminal.
-
-Also tested and working in WSL2 for windows, however there are random 2-3 second freezes that I haven't figured out yet.
 
 ---
 
