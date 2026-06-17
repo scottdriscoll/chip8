@@ -4,6 +4,7 @@ namespace App\Tui;
 
 use App\Systems\Decoders\KeyboardDecoder;
 use App\Systems\GameEngine;
+use App\Systems\Timer;
 use App\Tui\Widget\Chip8DisplayWidget;
 use Symfony\Component\Tui\Event\InputEvent;
 use Symfony\Component\Tui\Input\Key;
@@ -15,6 +16,7 @@ final readonly class Chip8TuiRunner
     public function __construct(
         private GameEngine $gameEngine,
         private KeyboardDecoder $keyboardDecoder,
+        private Timer $timer,
         private Chip8ViewStateFactory $stateFactory,
     ) {
     }
@@ -29,6 +31,8 @@ final readonly class Chip8TuiRunner
         $tui->add($display);
 
         $stopped = false;
+        $soundActive = false;
+        $lastBellAt = 0.0;
         $keyParser = new KeyParser();
 
         $tui->addListener(function (InputEvent $event) use ($keyParser, $tui, $display, &$stopped): void {
@@ -52,8 +56,17 @@ final readonly class Chip8TuiRunner
             }
         });
 
-        $tui->onTick(function () use ($tui, $display, &$stopped): bool {
+        $tui->onTick(function () use ($tui, $display, &$stopped, &$soundActive, &$lastBellAt): bool {
             $running = $this->gameEngine->tick();
+            $now = microtime(true);
+            $timerSoundActive = $this->timer->getSoundTimer() > 0;
+
+            if ($timerSoundActive && (!$soundActive || ($now - $lastBellAt) >= 0.15)) {
+                $tui->getTerminal()->bell();
+                $lastBellAt = $now;
+            }
+            $soundActive = $timerSoundActive;
+
             if (!$running) {
                 $stopped = true;
             }
